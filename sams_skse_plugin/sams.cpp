@@ -1,6 +1,9 @@
 #include "sams.h"
 #include "ui.h"
 #include "pap.h"
+#include "serialize.h"
+
+#include "skse/PluginAPI.h"
 
 #include <fstream>
 #include <iostream>
@@ -170,6 +173,23 @@ namespace sams
 		args->result = &outarray;
 	}
 
+
+	//serialization callbacks
+	void Save(SKSESerializationInterface * intfc)
+	{
+		sSave(intfc, globalAchievementMap, isInitialized);
+	}
+
+	void Load(SKSESerializationInterface * intfc)
+	{
+		sLoad(intfc, globalAchievementMap, isInitialized);
+	}
+
+	void Revert(SKSESerializationInterface * intfc)
+	{
+		sRevert(intfc, globalAchievementMap, isInitialized);
+	}
+
 	bool RegisterPapyrusFunctions(VMClassRegistry* registry)
 	{
 		registry->RegisterFunction(new NativeFunction2<StaticFunctionTag, bool, BSFixedString, UInt32>("IncrementAchievement", "SAMS", sams::PapIncrementAchievement, registry));
@@ -193,6 +213,15 @@ namespace sams
 		RegisterFunction <ScfGetAchievementList>(root, view, "GetAchievementList");
 		RegisterFunction <ScfGetAchievement>(root, view, "GetAchievement");
 
+		return true;
+	}
+
+	bool RegisterSerializationCallbacks(SKSESerializationInterface * intfc, PluginHandle handle)
+	{
+		intfc->SetUniqueID(handle, 'SAMS');
+		intfc->SetRevertCallback(handle, Revert);
+		intfc->SetSaveCallback(handle, Save);
+		intfc->SetLoadCallback(handle, Load);
 		return true;
 	}
 }

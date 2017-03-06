@@ -6,7 +6,8 @@
 
 static PluginHandle					g_pluginHandle = kPluginHandle_Invalid;
 static SKSEPapyrusInterface         * g_papyrus = NULL;
-SKSEScaleformInterface		* g_scaleform = NULL;
+       SKSEScaleformInterface		* g_scaleform = NULL;
+static SKSESerializationInterface	* g_serialization = NULL;
 
 extern "C"	{
 
@@ -53,6 +54,21 @@ extern "C"	{
 			return false;
 		}
 
+		g_serialization = (SKSESerializationInterface *)skse->QueryInterface(kInterface_Serialization);
+		if (!g_serialization)
+		{
+			_MESSAGE("couldn't get serialization interface");
+
+			return false;
+		}
+
+		if (g_serialization->version < SKSESerializationInterface::kVersion)
+		{
+			_MESSAGE("serialization interface too old (%d expected %d)", g_serialization->version, SKSESerializationInterface::kVersion);
+
+			return false;
+		}
+
 		// ### do not do anything else in this callback
 		// ### only fill out PluginInfo and return true/false
 
@@ -68,8 +84,9 @@ extern "C"	{
 		//Check if the function registration was a success...
 		bool btest = g_papyrus->Register(sams::RegisterPapyrusFunctions);
 		bool ctest = g_scaleform->Register("sams", sams::RegisterScaleformFunctions);
+		bool dtest = sams::RegisterSerializationCallbacks(g_serialization, g_pluginHandle);
 
-		if (btest && ctest) {
+		if (btest && ctest && dtest) {
 			_MESSAGE("Register Succeeded");
 			if (sams::InitializeAchievements())
 			{

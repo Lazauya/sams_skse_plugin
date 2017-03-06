@@ -10,6 +10,7 @@
 #include "skse/PapyrusNativeFunctions.h"
 
 #include "skse/ScaleformCallbacks.h"
+#include "skse/Serialization.h"
 
 namespace sams
 {
@@ -27,9 +28,14 @@ namespace sams
 	Counter GetAchievementCounter(std::string id);
 	Achievement GetAchievement(std::string id);
 
+	//serialization callbacks
+	void Save(SKSESerializationInterface * intfc);
+	void Load(SKSESerializationInterface * intfc);
+	void Revert(SKSESerializationInterface * intfc);
 
 	bool RegisterPapyrusFunctions(VMClassRegistry* registry);
 	bool RegisterScaleformFunctions(GFxMovieView * view, GFxValue * root);
+	bool RegisterSerializationCallbacks(SKSESerializationInterface * intfc, PluginHandle handle);
 }
 
 #endif samsh
