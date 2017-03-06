@@ -1,0 +1,4 @@
+LIBRARY	"sams"
+EXPORTS
+SKSEPlugin_Query
+SKSEPlugin_Load
