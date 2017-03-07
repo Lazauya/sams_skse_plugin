@@ -11,14 +11,14 @@
 namespace sams
 {
 	AchievementMap * globalAchievementMap;
-	bool isInitialized;
+	bool isInitialized = false;
 
 	//generic functions
 	bool InitializeAchievements()
 	{
 		if (!isInitialized)
 		{
-			globalAchievementMap = new AchievementMap;
+			globalAchievementMap = new AchievementMap();
 			isInitialized = true;
 		}
 
@@ -64,6 +64,8 @@ namespace sams
 		{
 			return false;
 		}
+
+		_MESSAGE("%s, %s, %s, %d, %d, %d", id.c_str(), name.c_str(), desc.c_str(), type, max, cur);
 
 		globalAchievementMap->insert(std::pair<std::string, Achievement>(id, Achievement(name, desc, type, Counter(max, cur))));
 
@@ -150,10 +152,11 @@ namespace sams
 	//scaleform function thats needs interaction with global map 
 	void ScfGetAchievementList::Invoke(Args * args)
 	{
-		ASSERT(args->numArgs == 0);
+		ASSERT((args->numArgs == 1) && (args->args[0].GetType() == GFxValue::kType_Array));
+		//ASSERT(args->numArgs == 0);
 
-		GFxValue outarray;
-		args->movie->CreateArray(&outarray);
+		GFxValue * outarray = &(args->args[0]);
+		//args->movie->CreateArray(&outarray);
 
 		for (auto it = globalAchievementMap->begin(); it != globalAchievementMap->end(); it++)
 		{
@@ -167,10 +170,16 @@ namespace sams
 			RegisterNumber(&entryElement, "max", double(std::get<3>(it->second).first));
 			RegisterNumber(&entryElement, "current", double(std::get<3>(it->second).second));
 
-			outarray.PushBack(&entryElement);
+			outarray->PushBack(&entryElement);
 		}
 
-		args->result = &outarray;
+		//_MESSAGE("_GEAL_got through the function");
+
+		//args->movie->CreateArray(args->result);
+
+		//args->result = &outarray; //it's not like i wanted this to work or anything, baka!
+
+		//args->args[0] = outarray;
 	}
 
 

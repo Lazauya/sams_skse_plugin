@@ -56,20 +56,20 @@ namespace sams
 
 	void ScfGetAchievement::Invoke(Args * args)
 	{
-		ASSERT((args->args[0].GetType() == GFxValue::kType_String) && (args->numArgs == 1));
+		ASSERT((args->args[0].GetType() == GFxValue::kType_String) && (args->args[1].GetType() == GFxValue::kType_Object) && (args->numArgs == 2));
 
-		GFxValue entryElement;
-		args->movie->CreateObject(&entryElement);
+		GFxValue * entryElement = &(args->args[1]);
+		//args->movie->CreateObject(&entryElement);
 
 		Achievement foundach = GetAchievement(args->args[0].GetString());
 
-		RegisterString(&entryElement, args->movie, "id", args->args[0].GetString());
-		RegisterString(&entryElement, args->movie, "name", std::get<0>(foundach).c_str());
-		RegisterString(&entryElement, args->movie, "description", std::get<1>(foundach).c_str());
-		RegisterNumber(&entryElement, "type", double(std::get<2>(foundach)));
-		RegisterNumber(&entryElement, "max", double(std::get<3>(foundach).first));
-		RegisterNumber(&entryElement, "current", double(std::get<3>(foundach).second));
+		RegisterString(entryElement, args->movie, "id", args->args[0].GetString());
+		RegisterString(entryElement, args->movie, "name", std::get<0>(foundach).c_str());
+		RegisterString(entryElement, args->movie, "description", std::get<1>(foundach).c_str());
+		RegisterNumber(entryElement, "type", double(std::get<2>(foundach)));
+		RegisterNumber(entryElement, "max", double(std::get<3>(foundach).first));
+		RegisterNumber(entryElement, "current", double(std::get<3>(foundach).second));
 
-		args->result = &entryElement;
+		//args->result = &entryElement;
 	}
 }
