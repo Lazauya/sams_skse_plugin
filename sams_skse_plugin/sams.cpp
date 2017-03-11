@@ -65,7 +65,7 @@ namespace sams
 			return false;
 		}
 
-		_MESSAGE("%s, %s, %s, %d, %d, %d", id.c_str(), name.c_str(), desc.c_str(), type, max, cur);
+		//_MESSAGE("%s, %s, %s, %d, %d, %d", id.c_str(), name.c_str(), desc.c_str(), type, max, cur);
 
 		globalAchievementMap->insert(std::pair<std::string, Achievement>(id, Achievement(name, desc, type, Counter(max, cur))));
 
